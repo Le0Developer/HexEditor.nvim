@@ -134,7 +134,7 @@ M.current = function()
 	end
 
 	local row, col = unpack(vim.api.nvim_win_get_cursor(0))
-	local loc = (row - 1) * 16 + math.floor((col - 13) / 3)
+	local loc = (row - 1) * 16 + math.floor((col - 10) / 3)
 	print(string.format("Current location: %X", loc))
 end
 
