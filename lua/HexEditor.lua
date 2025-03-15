@@ -103,6 +103,31 @@ M.toggle = function()
 	end
 end
 
+M.move = function(args)
+	local loc = args.fargs[1]
+	if type(loc) ~= "string" or not string.match(loc, "^[+-]?%x+$") then
+		error("Location must be hexadecimal.")
+	elseif not vim.b.hex then
+		error("Buffer is not in hex mode.")
+	end
+
+	local is_relative = string.match(loc, "^[+-]")
+
+	-- parse the hexadecimal location to number
+	local loc_num = tonumber(loc, 16)
+
+	if is_relative then
+		local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+		local current_loc = (row - 1) * 16 + math.floor((col - 13) / 3)
+		loc_num = current_loc + loc_num
+	end
+
+	-- move the cursor to the location
+	local row = math.floor(loc_num / 16) + 1
+	local col = (loc_num % 16) * 3 + 13
+	vim.api.nvim_win_set_cursor(0, { row, col })
+end
+
 local setup_auto_cmds = function()
 	vim.api.nvim_create_autocmd({ "BufReadPre" }, {
 		group = augroup_hex_editor,
@@ -161,6 +186,9 @@ M.setup = function(options)
 	vim.api.nvim_create_user_command("HexDump", M.dump, {})
 	vim.api.nvim_create_user_command("HexAssemble", M.assemble, {})
 	vim.api.nvim_create_user_command("HexToggle", M.toggle, {})
+	vim.api.nvim_create_user_command("HexMove", M.move, {
+		nargs = 1,
+	})
 
 	setup_auto_cmds()
 	setup_highlight()
