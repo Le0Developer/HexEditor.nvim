@@ -128,6 +128,16 @@ M.move = function(args)
 	vim.api.nvim_win_set_cursor(0, { row, col })
 end
 
+M.current = function()
+	if not vim.b.hex then
+		error("Buffer is not in hex mode.")
+	end
+
+	local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+	local loc = (row - 1) * 16 + math.floor((col - 13) / 3)
+	print(string.format("Current location: %X", loc))
+end
+
 local setup_auto_cmds = function()
 	vim.api.nvim_create_autocmd({ "BufReadPre" }, {
 		group = augroup_hex_editor,
@@ -189,6 +199,7 @@ M.setup = function(options)
 	vim.api.nvim_create_user_command("HexMove", M.move, {
 		nargs = 1,
 	})
+	vim.api.nvim_create_user_command("HexCurrent", M.current, {})
 
 	setup_auto_cmds()
 	setup_highlight()
