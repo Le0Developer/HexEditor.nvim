@@ -118,13 +118,13 @@ M.move = function(args)
 
 	if is_relative then
 		local row, col = unpack(vim.api.nvim_win_get_cursor(0))
-		local current_loc = (row - 1) * 16 + math.floor((col - 13) / 3)
+		local current_loc = (row - 1) * 16 + math.floor((col - 10) / 3)
 		loc_num = current_loc + loc_num
 	end
 
 	-- move the cursor to the location
 	local row = math.floor(loc_num / 16) + 1
-	local col = (loc_num % 16) * 3 + 13
+	local col = (loc_num % 16) * 3 + 10
 	vim.api.nvim_win_set_cursor(0, { row, col })
 end
 
